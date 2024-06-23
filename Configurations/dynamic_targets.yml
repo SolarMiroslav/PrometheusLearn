@@ -1,0 +1,10 @@
+- targets:
+  - "165.227.167.123:9100"
+  labels:
+    team: "pre-production"
+    region: "APAC"
+- targets:
+  - "165.227.167.123:9100"
+  labels:
+    team: "production"
+    region: "US-EAST" # you dont need to reload prometheus, just add new record to dynamic_targets

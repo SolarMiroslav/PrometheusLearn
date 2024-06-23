@@ -1,0 +1,11 @@
+route:
+  receiver: admin #default route, all alerts are send by default to admin receiver if conditions will be not met
+
+receivers:
+  - name: admin 
+    email_config:
+      - to: 'solar.miro@gmail.com'
+        from: 'solar.miro@gmail.com'
+        smarthost: smtp.gmail.com:587
+        auth_username: 'solar.miro@gmail.com'
+        auth_password: ''

@@ -1,0 +1,115 @@
+global:
+  smtp_from: 'solar.miro@gmail.com' #smtp_ prefix needs to be added
+  smtp_smarthost: smtp.gmail.com:587
+  smtp_auth_username: 'solar.miro@gmail.com'
+  smtp_auth_password: '' #The smtp_ prefix is used to clearly denote that these settings are related to SMTP email configuration. These settings apply globally to all email notifications sent by Alertmanage
+
+route:
+  receiver: admin #default route, all alerts are send by default to admin receiver if conditions will be not met
+  group_by: ["category"]
+  routes:
+    # Routes for OS allerts
+    - match_re:
+        app_type: (linux|windows) # matching label from linux/windows_rule.yml
+      receiver: abc_sol-admin # this is fallback receiver for OS alerts
+      routes:
+        - match_re: 
+            app_type: linux
+          receiver: abc_sol-linux-admin # fallback receiver for linux
+          routes:
+            - match_re:
+                severity: critical
+              receiver: abc_sol-linux-manager
+              continue: true
+            - match_re:
+                severity: warning
+              receiver: abc_sol-linux-teamlead # Receivers are evaluated from TOP to botom, if there is no "continue" evaluation will stop
+        - match_re: 
+            app_type: windows
+          receiver: abc_sol-windows-admin
+          routes:
+            - match_re:
+                severity: critical
+              receiver: abc_sol-windows-manager
+            - match_re:
+                severity: warning
+              receiver: abc_sol-windows-teamlead
+    # Routes for APP allerts
+    - match_re:
+        app_type: (python|go) # matching label from linux/windows_rule.yml
+      receiver: xyz_sol-admin # this is fallback receiver for OS alerts
+      routes:
+        - match_re:
+            app_type: python
+          receiver: xyz_sol-python-admin
+          routes:
+            - match_re:
+                severity: critical
+              receiver: xyz_sol-python-manager
+            - match_re:
+                severity: warning
+              receiver: xyz_sol-python-teamlead # Receivers are evaluated from TOP to botom, if there is no "continue" evaluation will stop
+        - match_re:
+            app_type: go
+          receiver: xyz_sol-go-admin
+          routes:
+            - match_re:
+                severity: critical
+              receiver: xyz_sol-go-manager
+            - match_re:
+                severity: warning
+              receiver: xyz_sol-go-teamlead # Receivers are evaluated from TOP to botom, if there is no "continue" evaluation will stop
+
+receivers:
+  - name: admin 
+    email_configs:
+      - to: 'solar.miro@gmail.com'
+  # OS both
+  - name: abc_sol-admin 
+    email_configs:
+      - to: 'solar.miro@gmail.com'
+  # LINUX
+  - name: abc_sol-linux-admin 
+    email_configs:
+      - to: 'solar.miro@gmail.com'
+  - name: abc_sol-linux-manager 
+    email_configs:
+      - to: 'solar.miro@gmail.com'
+  - name: abc_sol-linux-teamlead 
+    email_configs:
+      - to: 'solar.miro@gmail.com'
+  # Windows
+  - name: abc_sol-windows-admin 
+    email_configs:
+      - to: 'solar.miro@gmail.com'
+  - name: abc_sol-windows-manager
+    email_configs:
+      - to: 'solar.miro@gmail.com'      
+  - name: abc_sol-windows-teamlead
+    email_configs:
+      - to: 'solar.miro@gmail.com'       
+
+  # App both
+  - name: xyz_sol-admin 
+    email_configs:
+      - to: 'solar.miro@gmail.com'
+  # Python
+  - name: xyz_sol-python-admin 
+    email_configs:
+      - to: 'solar.miro@gmail.com'
+  - name: xyz_sol-python-manager 
+    email_configs:
+      - to: 'solar.miro@gmail.com'
+  - name: xyz_sol-python-teamlead 
+    email_configs:
+      - to: 'solar.miro@gmail.com'
+  # Go
+  - name: xyz_sol-go-admin 
+    email_configs:
+      - to: 'solar.miro@gmail.com'
+  - name: xyz_sol-go-manager
+    email_configs:
+      - to: 'solar.miro@gmail.com'      
+  - name: xyz_sol-go-teamlead
+    email_configs:
+      - to: 'solar.miro@gmail.com'                                
